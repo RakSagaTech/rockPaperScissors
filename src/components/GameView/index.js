@@ -10,7 +10,7 @@ import {
   ScoreContainer,
   ScoreHeading,
   Score,
-  GameViewContianer,
+  GameViewContainer,
   PlayingViewList,
   RulesButton,
   RulesPopupContainer,
@@ -25,16 +25,29 @@ import {
   PlayAgainButton,
 } from './styledComponents'
 
+const rules = {
+  ROCK: 'SCISSORS',
+  SCISSORS: 'PAPER',
+  PAPER: 'ROCK',
+}
+
 class GameView extends Component {
   state = {
     score: 0,
-    showGameResult: true,
+    showGameResult: false,
     youChoiceImage: '',
     opponentChoiceImage: '',
+    gameResult: '',
+  }
+
+  onClickPlayAgain = () => {
+    this.setState({
+      showGameResult: false,
+    })
   }
 
   renderGameResultView = () => {
-    const {youChoiceImage, opponentChoiceImage} = this.state
+    const {youChoiceImage, opponentChoiceImage, gameResult} = this.state
     return (
       <GameResultViewContainer>
         <ChoiceContainer>
@@ -47,10 +60,49 @@ class GameView extends Component {
             <Image src={opponentChoiceImage} alt="Opponent choice" />
           </HeadingImageContainer>
         </ChoiceContainer>
-        <YouWonHeading>YOU WON</YouWonHeading>
-        <PlayAgainButton>PLAY AGAIN</PlayAgainButton>
+        <YouWonHeading>{gameResult}</YouWonHeading>
+        <PlayAgainButton type="button" onClick={this.onClickPlayAgain}>
+          PLAY AGAIN
+        </PlayAgainButton>
       </GameResultViewContainer>
     )
+  }
+
+  getGameResult = (you, opponent) => {
+    if (you === opponent) return 'IT IS DRAW'
+
+    return rules[you] === opponent ? 'YOU WON' : 'YOU LOSE'
+  }
+
+  updateYouChoiceImage = id => {
+    const {choicesList} = this.props
+    const {score} = this.state
+
+    const userChoice = choicesList.find(choice => choice.id === id)
+    const youChoiceId = userChoice.id
+    const youChoiceImg = userChoice.imageUrl
+
+    const randomIndex = Math.floor(Math.random() * choicesList.length)
+    const opponentChoice = choicesList[randomIndex]
+    const opponentChoiceId = opponentChoice.id
+    const opponentChoiceImg = opponentChoice.imageUrl
+
+    const result = this.getGameResult(youChoiceId, opponentChoiceId)
+
+    let updatedScore = score
+    if (result === 'YOU WON') {
+      updatedScore += 1
+    } else if (result === 'YOU LOSE') {
+      updatedScore -= 1
+    }
+
+    this.setState({
+      youChoiceImage: youChoiceImg,
+      opponentChoiceImage: opponentChoiceImg,
+      gameResult: result,
+      showGameResult: true,
+      score: updatedScore,
+    })
   }
 
   renderPlayingView = () => {
@@ -58,7 +110,11 @@ class GameView extends Component {
     return (
       <PlayingViewList>
         {choicesList.map(eachChocie => (
-          <ChoiceImage key={eachChocie.id} choiceDetails={eachChocie} />
+          <ChoiceImage
+            key={eachChocie.id}
+            choiceDetails={eachChocie}
+            updateYouChoiceImage={this.updateYouChoiceImage}
+          />
         ))}
       </PlayingViewList>
     )
@@ -81,11 +137,11 @@ class GameView extends Component {
             <Score>{score}</Score>
           </ScoreContainer>
         </TitleScoreContainer>
-        <GameViewContianer>
+        <GameViewContainer>
           {showGameResult
             ? this.renderGameResultView()
             : this.renderPlayingView()}
-        </GameViewContianer>
+        </GameViewContainer>
         <Popup modal trigger={<RulesButton type="button">RULES</RulesButton>}>
           {close => (
             <RulesPopupContainer>

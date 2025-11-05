@@ -60,7 +60,7 @@ export const ScoreContainer = styled.div`
   }
 `
 
-export const ScoreHeading = styled.h1`
+export const ScoreHeading = styled.p`
   color: #223a5f;
   font-family: 'Bree Serif';
   font-weight: 500;
@@ -82,7 +82,7 @@ export const Score = styled.p`
   }
 `
 
-export const GameViewContianer = styled.div`
+export const GameViewContainer = styled.div`
   width: 100%;
   height: 100%;
   margin-top: 60px;
@@ -136,7 +136,7 @@ export const RulesPopupContainer = styled.div`
   height: 100%;
   padding-bottom: 30px;
   margin-top: 30px;
-  max-width: 500px;
+  max-width: 700px;
 `
 export const CloseButton = styled.button`
   border: none;
@@ -189,7 +189,7 @@ export const Image = styled.img`
   }
 `
 
-export const YouWonHeading = styled.h1`
+export const YouWonHeading = styled.p`
   color: #ffffff;
   font-family: 'Roboto';
   font-size: 30px;
